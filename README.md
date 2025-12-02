@@ -22,49 +22,81 @@ Smart Public Bus Tracker is designed to simplify public transport usage by letti
 
 Search buses using source → destination
 
-Prevents same source & destination selections
+Prevents invalid input
+
+Blocks same source & destination
+
+Requires valid stop selection
 
 Displays results only after valid search
 
-Clean error messages similar to Blink/RedBus UI
+Clean error messages
+
+Styled similar to Blink/RedBus UI
 
 🚌 2. Real-Time Style Bus Details
 
-ETA with bold styling
+ETA displayed clearly with bold styling
 
-Next stop displayed with highlight
+Next stop highlighted
 
-Bus ID, status, and route name shown clearly
+Shows key bus information:
 
-Timeline view of all route stops (start → end)
+Bus ID
+
+Current status
+
+Route name
+
+Route timeline view
+
+Shows all stops from start → end
 
 🔐 3. Authentication (Firebase)
 
-Email/Password login
+Login System
 
-Create Account with validation
+Email + Password login
+
+Account Creation
+
+Input validation
 
 Email verification
 
-Password reset via email
+Welcome email after registration
 
-Thank-you email sent after account creation
+Password Management
+
+Password reset via email
 
 📡 4. Database Support
 
-Centralized bus route storage from Firebase Firestore
+Primary Storage
 
-Auto-fallback to local JS data if network fails
+Firebase Firestore
 
-(Optional) Supports Excel import for admin update
+Fallback System
+
+Automatically uses local JS data if Firestore fails
+
+Optional Admin Support
+
+Excel import for future route updates
 
 📱 5. Modern Responsive UI
 
 Built with React + TailwindCSS
 
-Professional card layout
+Clean card-based layout
 
-Fully responsive for mobile/laptop
+Fully responsive for:
+
+Mobile
+
+Tablet
+
+Laptop
 
 🏗️ Tech Stack
 Category	                Tools / Technologies
