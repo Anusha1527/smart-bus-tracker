@@ -7,14 +7,15 @@ This application helps students and commuters easily find available KSRTC/colleg
 
 Smart Public Bus Tracker is designed to simplify public transport usage by letting users:
 
-✔ Select source and destination
-✔ Instantly view all buses running on that route
-✔ See ETA, next stop, route details, and bus status
-✔ Get a clean, modern, mobile-friendly UI
-✔ Secure user login & signup using Firebase Authentication
-✔ “Forget Password” feature with email reset
-✔ Welcome email on new account creation
-✔ Bus data loaded dynamically (supports Firebase / local JSON / future Excel integration)
+- ✔️ Select source and destination  
+- ✔️ Instantly view all buses running on that route  
+- ✔️ See ETA, next stop, route details, and bus status  
+- ✔️ Get a clean, modern, mobile-friendly UI  
+- ✔️ Secure user login & signup using Firebase Authentication  
+- ✔️ “Forget Password” feature with email reset  
+- ✔️ Welcome email on new account creation  
+- ✔️ Bus data loaded dynamically (supports Firestore / local JSON / future Excel integration)
+
 
 🌟 Key Features
 🔍 1. Smart Bus Search
