@@ -3,12 +3,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 // Your Firebase configuration
 const firebaseConfig = {
-  apiKey: "....",
-  authDomain: ".....",
-  projectId: "......",
-  storageBucket: ".....",
-  messagingSenderId: ".....",
-  appId: "....."
+  apiKey: "...",
+  authDomain: "...,
+  projectId: "...",
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "..."
 };
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
