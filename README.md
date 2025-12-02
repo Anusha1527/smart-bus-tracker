@@ -207,11 +207,3 @@ This project aims to make public transport **simpler, smarter, and student-frien
 If you find this useful, don’t forget to **⭐ star the repo!**
 
 ---
-
-If you want, I can also create:
-🎨 A project banner
-🖼️ Feature preview screenshots
-📄 PDF version of the README
-🎥 Demo video script
-
-Just tell me!
