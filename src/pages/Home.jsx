@@ -2,9 +2,11 @@ import { useState } from "react";
 import SearchForm from "../components/SearchForm";
 import BusList from "../components/BusList";
 import { useBusData } from "../context/BusDataContext";
+import { useUserHistory } from "../context/UserHistoryContext";
 
 export default function Home() {
   const { routes, loading, error: dataError } = useBusData();
+  const { recordSearch } = useUserHistory();
 
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
@@ -73,6 +75,9 @@ export default function Home() {
       );
     } else {
       setSearchError("");
+      // Record successful search in user history
+      const matchedRoute = matches[0].route; // Use first matched route's name
+      recordSearch(source, destination, matchedRoute.name);
     }
 
     setResults(matches);
@@ -85,6 +90,14 @@ export default function Home() {
         <h2 className="text-lg md:text-xl font-semibold">
           Welcome to Smart Public Bus Tracker
         </h2>
+      </div>
+
+      {/* Description just under search box */}
+      <div className="text-center mt-6 mb-6">
+        <p className="text-s md:text-sm text-slate-600 max-w-xl mx-auto">
+          Select your source and destination to find buses running on your
+          route.
+        </p>
       </div>
 
       {/* Firestore/localStorage warning */}
@@ -106,15 +119,7 @@ export default function Home() {
         routes={routes || []}
       />
 
-      {/* Description just under search box */}
-      <div className="text-center mt-6 mb-6">
-        <p className="text-xs md:text-sm text-slate-600 max-w-xl mx-auto">
-          Select your source and destination to find buses running on your
-          route. Get real-time style information about bus numbers, ETAs, and
-          current status – all without tracking the driver's phone.
-        </p>
-      </div>
-
+      
       {/* Error bar under description */}
       {searchError && (
         <div className="max-w-6xl mx-auto mt-2 px-4">
@@ -126,7 +131,7 @@ export default function Home() {
       )}
 
       {/* Bus cards / 'No buses' text (controlled by hasSearched) */}
-      <BusList results={results} hasSearched={hasSearched} />
+      <BusList results={results} hasSearched={hasSearched} /> 
     </div>
   );
 }

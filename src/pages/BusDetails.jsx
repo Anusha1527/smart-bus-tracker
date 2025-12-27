@@ -1,15 +1,24 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { useBusData } from "../context/BusDataContext";
+// Demo mode removed — use real-time speed only
+import { useUserHistory } from "../context/UserHistoryContext";
+import { useState, useEffect } from "react";
+import { calculateBusMetrics } from "../utils/etaCalculator";
+import { calculateBusPosition } from "../utils/mapUtils";
+import LiveMap from "../components/LiveMap";
 
 export default function BusDetails() {
   const { busId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const decodedId = decodeURIComponent(busId);
+  const [metrics, setMetrics] = useState(null);
+  const SIMULATION_SPEED = 1; // real-time only
+  const { recordBusView } = useUserHistory();
 
   // ⬇️ Get routes from context instead of importing from routesData.js
-  const { routes } = useBusData();
+  const { routes, updateBusPosition, finalizeRouteForBus, actualPaths, deviations } = useBusData();
 
   let route = null;
   let bus = null;
@@ -29,7 +38,39 @@ export default function BusDetails() {
     });
   }
 
-  if (!route || !bus) {
+  // Update metrics every second
+  useEffect(() => {
+    if (!bus) return;
+
+    // Record this bus view in user history (once when component mounts)
+    recordBusView(bus.id, route.id, route.name);
+
+    setMetrics(calculateBusMetrics(bus, bus.departureTime, route, SIMULATION_SPEED));
+
+    const interval = setInterval(() => {
+      const newMetrics = calculateBusMetrics(bus, bus.departureTime, route, SIMULATION_SPEED);
+      setMetrics(newMetrics);
+
+      // Calculate simulated GPS position and push to context
+      const pos = calculateBusPosition(
+        newMetrics.status === "At stop" ? newMetrics.nextStop : bus.nextStop,
+        newMetrics.nextStop,
+        newMetrics.remainingSeconds,
+        bus.segmentTimeSeconds || 420
+      );
+      // pos is [lat, lng]
+      updateBusPosition(bus.id, pos);
+
+      // If route completed/departed, finalize and compute deviation
+      if (newMetrics.isDeparted) {
+        finalizeRouteForBus(bus.id);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [bus, route, SIMULATION_SPEED]);
+
+  if (!route || !bus || !metrics) {
     return (
       <div className="max-w-4xl mx-auto mt-8 px-4">
         <div className="card p-6">
@@ -46,7 +87,7 @@ export default function BusDetails() {
   }
 
   const stops = route.stops;
-  const currentIndex = stops.findIndex((s) => s === bus.nextStop);
+  const currentIndex = stops.findIndex((s) => s === metrics.nextStop);
 
   return (
     <div className="max-w-4xl mx-auto mt-6 mb-10 px-4 space-y-4">
@@ -71,11 +112,11 @@ export default function BusDetails() {
               />
             </div>
             <div>
-              <p className="font-semibold text-sm md:text-base">{bus.id}</p>
+              <p className="font-semibold text-sm md:text-base">{metrics.id}</p>
               <p className="text-[11px] text-slate-500">{route.name}</p>
             </div>
           </div>
-          <span className="badge-green">{bus.status}</span>
+          <span className="badge-green">{metrics.status}</span>
         </div>
 
         {/* ETA + NEXT STOP: LEFT–RIGHT alignment */}
@@ -86,7 +127,7 @@ export default function BusDetails() {
             <div className="leading-tight">
               <span className="text-slate-600 text-sm block">ETA</span>
               <span className="text-emerald-600 text-xl font-bold">
-                {bus.eta}
+                {metrics.eta}
               </span>
             </div>
           </div>
@@ -97,7 +138,7 @@ export default function BusDetails() {
             <div className="leading-tight">
               <span className="text-slate-600 text-sm block">Next Stop</span>
               <span className="text-slate-900 text-xl font-bold">
-                {bus.nextStop}
+                {metrics.nextStop}
               </span>
             </div>
           </div>
@@ -153,16 +194,15 @@ export default function BusDetails() {
         </div>
       </div>
 
-      {/* Live Map Placeholder */}
+      {/* Live Map */}
       <div className="card p-5">
-        <h3 className="text-sm font-semibold mb-2">Live Tracking</h3>
-        <div className="border border-dashed border-slate-200 rounded-lg h-40 flex flex-col items-center justify-center text-xs text-slate-500">
-          <div className="text-2xl mb-2">🗺</div>
-          <p className="font-medium mb-1">Live Map Coming Soon</p>
-          <p className="max-w-xs text-center">
-            Real-time bus tracking on map will be available in the next update.
-          </p>
-        </div>
+        <LiveMap
+          bus={bus}
+          route={route}
+          metrics={metrics}
+          actualPath={actualPaths ? actualPaths[bus.id] : undefined}
+          deviation={deviations ? deviations[bus.id] : undefined}
+        />
       </div>
     </div>
   );
